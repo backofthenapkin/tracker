@@ -1,5 +1,5 @@
 # Tracker
-Product Thoughts and Ideas. This repository publishes product ideas or product feedback from the Cortex team. These thoughts are based on my point-of-view on productivity, user interactions or market trends. We welcome feedback and contributions. 
+A repository for Product Thoughts and Ideas. This repository publishes product ideas or product feedback from the Cortex team. These thoughts are based on my point-of-view on productivity, user interactions or market trends. We welcome feedback and contributions. 
 
 # Tracker Categories
 This tracker looks at any of these solution categories
