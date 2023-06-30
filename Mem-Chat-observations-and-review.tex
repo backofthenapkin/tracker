@@ -1,0 +1,322 @@
+\documentclass[]{tufte-handout}
+
+% ams
+\usepackage{amssymb,amsmath}
+
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \makeatletter
+  \@ifpackageloaded{fontspec}{}{\usepackage{fontspec}}
+  \makeatother
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+  \makeatletter
+  \@ifpackageloaded{soul}{
+     \renewcommand\allcapsspacing[1]{{\addfontfeature{LetterSpace=15}#1}}
+     \renewcommand\smallcapsspacing[1]{{\addfontfeature{LetterSpace=10}#1}}
+   }{}
+  \makeatother
+
+\fi
+
+% graphix
+\usepackage{graphicx}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+
+% booktabs
+\usepackage{booktabs}
+
+% url
+\usepackage{url}
+
+% hyperref
+\usepackage{hyperref}
+
+% units.
+\usepackage{units}
+
+
+\setcounter{secnumdepth}{-1}
+
+% citations
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+
+
+% pandoc syntax highlighting
+
+% table with pandoc
+
+% multiplecol
+\usepackage{multicol}
+
+% strikeout
+\usepackage[normalem]{ulem}
+
+% morefloats
+\usepackage{morefloats}
+
+
+% tightlist macro required by pandoc >= 1.14
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% title / author / date
+\title[Cortex Thoughts on Mem AI: Show Your Work]{Mem AI: A note taking
+tool that should show its work.}
+\author{Peter Buck \textbar{}
+\href{https://twitter.com/backofthenapkin}{BackoftheNapkin on Twitter}}
+\date{June 2023}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent Abstract: This is my best work ever.
+\end{abstract}
+
+
+
+\hypertarget{mem-interface-evolution}{%
+\section{Mem interface evolution}\label{mem-interface-evolution}}
+
+Mem is a leader in the crowded application category for personal
+productivity note taking and task wrangling or ``second brain''
+applications. Mem is well funded\footnote{OpenAI leads \$23.5M round in
+  Mem, an AI-powered note-taking app, from
+  \href{https://techcrunch.com/2022/11/10/ai-powered-note-taking-app-mem-raises-23-5m-openai/}{TechCrunch}.}
+{[}footnote{]} and has a passionate user community on Slack. I am a Mem
+subscriber and early adopter.
+
+I like Mem because the interface is simple, implements a reasonable
+subset of Markdown\footnote{Markdown Cheatsheet · adam-p/markdown-here
+  Wiki (github.com)
+  (\url{https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet})}
+{[}footnote{]}, and makes nice use of templates and Zapier. Mem
+continues to iterate the product, but in what direction? I will leave
+aside the debates on the Mem community Slack regarding two popular
+topics: Focus on basics like earch and iOS stability or Less AI, More
+Build Quality.
+
+What I want to explore is the design goals for Chat. Chat is one of
+Mem's AI implementations\footnote{When using the initial release of
+  Chat, previously called Smart Text or MemX, I observed the Mem syntax
+  was very ``technical'' and could benefit from clear sentence structure
+  in the prompts. \href{https://mem.ai/p/8MNks0EqWJ5MQchy80ZG}{MemX is
+  Opaque}} to help surface Mem content or support writing. The design
+team continues to experiment with large language models (LLMs) and how
+you interact with Chat. The Mem team is releasing often to the
+community.
+
+As everyone explores the new AI-assisted interaction model, what is the
+ideal model? How much should the application reveal about decisions
+underlying the suggestions? I will use Mem Chat to explore these
+questions.
+
+\hypertarget{mem-chat-user-interactions}{%
+\subsection{Mem Chat User
+Interactions}\label{mem-chat-user-interactions}}
+
+Chat is Mem's implementation of LLMs. There are three scenarios to
+explore:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Chat Suggestions in the Sidebar
+\item
+  Chat Navigation, and
+\item
+  Chat Welcome
+\end{enumerate}
+
+Overall, Mem designers did a nice job avoiding Norman's
+criticism\footnote{A recent paper from the astute Neilsen Norman reviews
+  the new AI interfaces in {[}AI: First New UI Paradigm in 60 Years{]}
+  (\href{https://www.nngroup.com/articles/ai-paradigm/}{https://www.nngroup.com/articles/ai-paradigm/)})}
+that AI chat interfaces are the ``first new UI paradigm in 60 Years''
+where users tell the computer what to do. Unlike the prompt engineering
+of ChatGPT where you describe what outcome you desire, Mem is working
+hard to determine your intent; presumably from the content of the Mem
+and associated Mem collections.
+
+I will defer the odd rise of the ✨ spark icon as the choice to
+represent AI in many well-known products such as Google Photos and
+Notion AI. Some say ``it is widely recognized as a symbol of innovation,
+creativity, and inspiration in the tech industry, particularly in the
+field of AI.''\footnote{A positive comment on the spark icon from
+  \href{https://bootcamp.uxdesign.cc/the-unstoppable-rise-of-spark-as-ais-iconic-symbol-ca663162cccc}{Bootcamp}.}
+
+Many think the spark conveys the wonder and possibility of AI. However,
+wonder without transparency is confusion. I think FastCompany's three
+icon recommendation is better.\footnote{\href{https://www.fastcompany.com/90903238/simple-icon-it-easy-to-spot-ai-generated-content}{FastCompany
+  AI icons for all generative text.}} This icon set provides for a
+generalized approach for all content types, hybrid content generated by
+humans but augmented by AI. This middle content type that enahnces human
+content is the domain of Mem
+
+\hypertarget{chat-interaction-the-sidebar}{%
+\subsection{\#1 Chat Interaction: The
+Sidebar}\label{chat-interaction-the-sidebar}}
+
+Here is an example of Chat stepping into a Mem to provide suggestions.
+The use of the sidebar is nice; the refresh icon is nicely placed. I
+assume the ✨ spark icon is meant to indicate the top two sidebar
+elements are machine generated. Good so far.
+
+\begin{figure}
+\centering
+\includegraphics{images/mem-chatUI.png}
+\caption{Mem Chat User Interface}
+\end{figure}
+
+I have challenges\footnote{Sample Mem sidebar extension with Chat. I
+  appreciate the symmetry of three options in each box. But I need
+  context for why ``these three'' are listed in either the Chat
+  Suggestions or the Similar to this mem groups.} with the origins of
+the content, including:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  The first chat recommendation is ``Provide a critique on the
+  article.'' What is the logic for using ``on the article''? Was it
+  because the Mem template is ``Article'' or the Mem is tagged
+  ``\#article''?
+\item
+  When I asked Mem to regenerate the Chat, the suggestions moved away
+  from the article theme. Chat now seems to focus on ways to improve the
+  research.
+
+  \includegraphics{images/mem-chatUI regen.png}
+\end{enumerate}
+
+Turning to the companion boxes in the UI, I understand the ``Similar to
+this mem.''\footnote{I do wonder why Mem is not sentence case. Mem is a
+  product; a capital M is appropriate.} The last box is called
+``articles,'' which I assume comes from the ``\#article'' collection? I
+would recommend a hover tip or some visual clue why these Mems and
+collections where recommended.
+
+\hypertarget{chat-navigation-consuming-suggestions}{%
+\subsection{\#2 Chat Navigation: Consuming
+Suggestions}\label{chat-navigation-consuming-suggestions}}
+
+I do appreciate the ability to refresh Chat Suggestions; performance is
+super fast, so I assume Mem has cached suggestions. After refreshing a
+few times, I found a suggestion I wanted to explore.\footnote{The prompt
+  text generated by Mem is ``Identify and address any potential
+  limitations or drawbacks of using ChatGPT and PlantUML for mind
+  mapping.''}
+
+{[}image{]}
+
+Each suggestion is a hyperlink to the ``Chat'' interface of Mem. This
+interface is a full page with a Chat icon highlighted at the top of the
+page. The response is polite and useful, as follows:
+
+\begin{quote}
+Certainly, Peter. While using ChatGPT and PlantUML for mind mapping can
+be a powerful combination, there are a few potential limitations and
+drawbacks to consider:
+
+\textbf{Limited Contextual Understanding}: ChatGPT, while impressive,
+may not always fully grasp the context or nuances of a conversation.
+This could lead to inaccuracies or misunderstandings when generating
+mind maps based on user prompts.
+
+\textbf{Lack of Real-Time Interaction}: ChatGPT doesn't support
+real-time interaction. If you want to modify or expand a part of the
+mind map while it's being created, you might need to start over or
+manually edit the generated content.
+
+\textbf{Formatting Constraints}: PlantUML, while versatile, has its own
+syntax and formatting rules. This might limit the complexity or visual
+appeal of the mind maps you can create. For instance, it might not
+support certain types of graphical customization that other mind mapping
+tools offer.
+\end{quote}
+
+I have the options to save the generated text as a new Mem or Copy the
+text. Nice, productive options. However, I want to return back to the
+Mem context that initiated this AI diversion. Does Mem provide any
+navigational aids next to the Mem or Copy options? No.
+
+Mem does provide a disclaimer below the text ``Mem answers questions and
+creates content using the knowledge you've saved and public knowledge,''
+with a nice learn more link.\footnote{The link is to Mem support
+  article:
+  \href{https://support.mem.ai/article/102-chat-with-your-mem}{Chat with
+  your Mem.}}
+
+Mem, however, gives me no UI element return to my work. The browser back
+button or Alt+Left Arrow is available. I would expect the UI to help
+with the following:
+
+\begin{itemize}
+\item
+  Gracefully return back to the Mem
+\item
+  If I opt to create a new Mem from the generated text, Mem should show
+  the original Mem and the new Mem in the split pane interface.
+\item
+  Place the thumbs-up, thumbs-down rating of the generated text in the
+  same UI location as the new Mem and Copy options. Instead the rating
+  buttons are at the top of the text; the Mem buttons are at the bottom.
+\end{itemize}
+
+If the goal of Mem Chat is to improve my productivity, then don't erase
+that productivity with splintered menus and awkward navigation. My
+recommendation is to make the Chat button in the top navigation a
+toggle. The button is active when in Chat; clicking the active button
+will turn Chat off and return to the original Mem.
+
+\hypertarget{chat-welcome-make-it-easier-to-start}{%
+\subsection{\#3 Chat Welcome: Make it Easier to
+Start}\label{chat-welcome-make-it-easier-to-start}}
+
+Imagine you are a party. You can pick between two questions: ``what are
+your goals?'' or ``are you a coffee or tea fan?'' Everyone will pick the
+second question because it is easier to answer; it gets the conversation
+started and might lead to bigger questions.
+
+Mem starts with a Chat question: ``What can I help with?''
+
+{[}chat UI image{]}
+
+Everyday I respond ``what are my tasks today,'' and Chat responds ``I
+don't have real-time access to your task list or calendar.'' However,
+Mem does have a Markdown convention of ``{[}{]}'' to create a task; Mem
+has collections to group Mems. It even shows ``consulted sources'' of my
+Mems. Mem even suggests a prompt ``What tasks do I have for tomorrow?''
+that produces the same ``I don't have real-time access'' response.
+
+Using the example question I raised in this section, what if Mem started
+with these prompts:
+
+\begin{quote}
+Your Mems from yesterday focused on these topics {[}list the top 3 like
+Mem did in the Sidebar example above{]}. Then Mem asked ``What topic
+should we continue with today?''
+\end{quote}
+
+Even better
+
+\begin{quote}
+You have the following meetings this week {[}list{]}. Do you need help
+drafting meeting invitations or review the email before you send it?
+\end{quote}
+
+Generative AI is a journey. I appreciate the partnership with the Mem
+team on the journey. I'm prepared for the journey, I just want the
+destination to emerge. The more Mem can help, the more productive we can
+become.
+
+
+
+\end{document}
